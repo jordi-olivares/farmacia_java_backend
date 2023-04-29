@@ -1,0 +1,10 @@
+   ,--.  ,.----.,  ,.--.,    ____      __
+   |  | '   _    ' |     '  |    '.   |  |
+   |  | |  | |   | |  ° ,'  |  _   '  |  |
+   |  | |  | |   | |    \   | | |  |  |  |
+ __|  | |  |_|   | |  |\ \  | |_|  |  |  |
+|_____| ',.____.,  |__| \_\ |____,.'  |__|
+  
+:: Running Spring Boot: ${spring-boot.version}
+:: Micro-Service: ${spring.application.name}
+:: Application Version: ${spring.application.version}          

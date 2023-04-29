@@ -1,0 +1,17 @@
+
+spring:
+    jpa:
+        hibernate:
+            ddl-auto: none
+        database: postgresql
+    datasource:
+        url: jdbc:postgresql://localhost:5432/app_farmacia
+        username: postgres
+        password: Welcome
+    application:
+        name: '@artifactId@'
+        version: '@project.version@'
+
+server:
+    servlet:
+        context-path: /farmacia
