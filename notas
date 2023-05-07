@@ -1,0 +1,119 @@
+Notas sobre solamente como crear un endpoint simple.
+
+
+########################################################
+#############DATA OBJECT################################
+########################################################
+Siempre se comienza mapeando los DO (data object) de los
+Objetos de la base de datos, Como los objetos ClienteDO.
+Para indicar que es un objeto de una base de datos se
+utiliza la notación 
+
+@Entity
+
+Se puede asignar el nombre de la tabla a la que se hace
+referencia con la propiedad name de esta notación
+@Entity(name="cliente")
+
+O se puede utilizar la notación table y su atributo name
+
+@Entity
+@Table(name="cliente")
+
+##########Llave primaria################################
+
+https://www.oscarblancarteblog.com/2016/11/01/definir-llave-primaria-id/
+
+Lo siguiente son las notaciones que se ocupan para definir
+las columnas, comensando con la columna de la llave primaria
+está columna debe llevar la notación @Id y la notación
+@Column(name="PK_ID") donde la notación column indica el
+nombre de la columna en la base de datos. Todas las
+propiedades de la entidad deben ser privadas. Además de
+esas notaciones se debe utilizar una secuancia para la
+llave primaria. Para ello existe la notación
+
+@GeneratedValue(strategy=GenerationType.IDENTITY)
+
+Con el valor IDENTITY se especifica que el siguiente
+valor del id al insertar una nueva linea a la tabla
+se generará en la misma tabla a la que hace referencia
+
+Además de IDENTITY existen AUTO que es el valor por defecto
+y especifica que la secuencia la generará spring por nosotros
+pero no funciona bien cuando se trabaja con una db real.
+Además de Identity y AUTO existe SEQUENCE. Que indica
+que los valores de la id se generarán en una secuencia que
+no está relacionada a nivel de base de datos con la
+columna id de la tabla.
+
+@GeneratedValue(startegy=GenerationType.SEQUENCE, generator="nombre en java")
+
+Para poder utilizarla se necesita un @SequenceGenerator() 
+es una notación que se define de la siguiente forma
+
+@SequenceGenerator(
+	name="NombreEnJava",
+	sequenceName="NombreEnLaDB",
+	initialValue=1,
+	allocationSize=10
+	)
+
+Donde las últimas dos lineas solo se ocupan si JPA es quién
+crea la secuencia, cuando se trabaja con una db real no es
+necesario especificar estos parametros
+-allocationSize es el valor del salto entre una incersión y
+otra.
+
+Un ejemplo trabajando con una db real sería
+
+@Entity(name="cliente")
+public class ClienteDO{
+	@Id
+	@Column("PK_ID")
+	@SequenceGenerator(
+		name="sequenceClienteId",
+		sequenceName="SEQ_CLIENTE_PK",
+		allocationSize=1
+	)
+
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator=sequenceClienteId)
+	private Long id;
+}
+
+
+###################ManyToOne###############################
+
+Parte importante de los DO es cuando una tabla tiene una
+foreight key para relacionarse con otra tabla, generalmente
+cuando es una relación uno a muchos se ocupa la notación
+@ManyToOne y cuando es de muchos a muchos se hace una
+tabla intermedia y se vuelve a ocupar la misma notación
+para no tener problemas con JACKSON.
+
+Para las columnas normales solo hay que agregar la
+notación column que indica el nombre de la columna en
+la db.
+
+@Column(name="nombre")
+private String nombre;
+
+Para las claves foráneas con la notación @ManyToOne
+se debe agregar dicha notación en un objeto del tipo
+al que hace referencia la llave foránea.
+
+@ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+@JoinColumn
+private ProductoDO producto;
+
+Donde cascade=CascadeType.ALL hace referencia a si
+se se arrastra lo demás al actualizar su valor,
+fetch=FetchType.EAGER
+sirve para indicar que se deben cargar los objetos
+relacionados a las llaves foráneas desde el principio
+también existe LAZY en vez de eager que hace que
+se descargen los objetos relacionados hasta que se
+requieren.
+
+
+
